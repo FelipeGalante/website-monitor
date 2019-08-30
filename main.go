@@ -1,18 +1,24 @@
 package main
 
 import (
+	"encoding/json"
 	"fmt"
+	"io/ioutil"
 	"net/http"
 	"os"
 	"time"
 )
 
+const configFile = "config.json"
+
+type URLs struct {
+	URLs []string `json:"urls"`
+}
+
 func main() {
 	for {
 		printMenuOptions()
-
 		option := readOption()
-
 		handleOption(option)
 	}
 }
@@ -39,9 +45,10 @@ func printMenuOptions() {
 	)
 
 	t := time.Now()
-	fmt.Println(t.Format(layoutUS))
 
-	fmt.Println("\n1 - Start Monitoring")
+	fmt.Println("\n", t.Format(layoutUS))
+	fmt.Println("----------MENU----------")
+	fmt.Println("1 - Start Monitoring")
 	fmt.Println("2 - Show logs")
 	fmt.Print("9 - Exit application\n\n")
 }
@@ -55,10 +62,8 @@ func readOption() int {
 
 func startMonitoring() {
 	fmt.Println("Monitoring...\n")
-	URLs := []string{
-		"https://random-status-code.herokuapp.com",
-		"https://nemo.levven.com/healthcheck",
-	}
+
+	URLs := createListURL()
 
 	for i := 0; i < 5; i++ {
 		executeMonitoring(URLs)
@@ -67,8 +72,9 @@ func startMonitoring() {
 
 }
 
-func executeMonitoring(URLs []string) {
-	for _, url := range URLs {
+func executeMonitoring(urls URLs) {
+	for i := 0; i < len(urls.URLs); i++ {
+		url := urls.URLs[i]
 		fmt.Println(url)
 		resp, err := http.Get(url)
 		if err != nil {
@@ -76,4 +82,26 @@ func executeMonitoring(URLs []string) {
 		}
 		fmt.Println(resp.Status, "\n")
 	}
+}
+
+func readConfigFile() []byte {
+	jsonFile, err := os.Open(configFile)
+
+	if err != nil {
+		fmt.Println(err)
+	}
+	defer jsonFile.Close()
+
+	byteValue, _ := ioutil.ReadAll(jsonFile)
+
+	return byteValue
+}
+
+func createListURL() URLs {
+	byteValue := readConfigFile()
+	var urls URLs
+
+	json.Unmarshal(byteValue, &urls)
+
+	return urls
 }
