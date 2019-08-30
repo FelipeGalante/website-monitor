@@ -44,12 +44,18 @@ func readOption() int {
 }
 
 func startMonitoring() {
-	fmt.Println("Monitoring...")
-	url := "https://random-status-code.herokuapp.com/"
-	fmt.Println(url)
-	resp, err := http.Get(url)
-	if err != nil {
-		fmt.Println("Error on request: ...", err)
+	fmt.Println("Monitoring...\n")
+	URLs := []string{
+		"https://random-status-code.herokuapp.com",
+		"https://nemo.levven.com/healthcheck",
 	}
-	fmt.Println(resp.Status)
+
+	for _, url := range URLs {
+		fmt.Println(url)
+		resp, err := http.Get(url)
+		if err != nil {
+			fmt.Println("Error on request: ...", err)
+		}
+		fmt.Println(resp.Status, "\n")
+	}
 }
