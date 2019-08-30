@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"net/http"
 	"os"
 )
 
@@ -11,30 +12,22 @@ func main() {
 
 		option := readOption()
 
-		isRunning := handleOption(option)
-
-		if !isRunning {
-			// break
-			os.Exit(0)
-		}
+		handleOption(option)
 	}
 }
 
-func handleOption(option int) bool {
-	isRunning := true
+func handleOption(option int) {
 	switch option {
 	case 1:
-		fmt.Println("Monitoring...")
+		startMonitoring()
 	case 2:
 		fmt.Println("Logs:")
 	case 9:
 		fmt.Println("Exiting...")
-		isRunning = false
-		break
+		os.Exit(0)
 	default:
 		fmt.Println("Unknown option!")
 	}
-	return isRunning
 }
 
 func printMenuOptions() {
@@ -48,4 +41,15 @@ func readOption() int {
 	var option int
 	fmt.Scan(&option)
 	return option
+}
+
+func startMonitoring() {
+	fmt.Println("Monitoring...")
+	url := "https://random-status-code.herokuapp.com/"
+	fmt.Println(url)
+	resp, err := http.Get(url)
+	if err != nil {
+		fmt.Println("Error on request: ...", err)
+	}
+	fmt.Println(resp.Status)
 }
