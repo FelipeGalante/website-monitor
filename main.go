@@ -9,6 +9,12 @@ import (
 	"time"
 )
 
+const usage = `
+Options:
+  -h --help        Show this screen.
+  -v --version     Show version.
+`
+
 const configFile = "config.json"
 
 type URLs struct {
