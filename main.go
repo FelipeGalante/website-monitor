@@ -16,6 +16,7 @@ Options:
 `
 
 const configFile = "config.json"
+const logFile = "website-monitor.log"
 
 type URLs struct {
 	URLs []string `json:"urls"`
@@ -46,8 +47,7 @@ func handleOption(option int) {
 func printMenuOptions() {
 
 	const (
-		layoutISO = "2006-01-02"
-		layoutUS  = "January 2, 2006 3:04 PM"
+		layoutUS = "January 2, 2006 3:04 PM"
 	)
 
 	t := time.Now()
@@ -86,6 +86,7 @@ func executeMonitoring(urls URLs) {
 		if err != nil {
 			fmt.Println("Error on request: ...", err)
 		}
+		saveLog(url, resp.Status)
 		fmt.Println(resp.Status, "\n")
 	}
 }
@@ -110,4 +111,16 @@ func createListURL() URLs {
 	json.Unmarshal(byteValue, &urls)
 
 	return urls
+}
+
+func saveLog(url string, status string) {
+	logFile, err := os.OpenFile(logFile, os.O_RDWR|os.O_CREATE|os.O_APPEND, 0666)
+
+	if err != nil {
+		fmt.Println(err)
+	}
+
+	logFile.WriteString(url + " - " + status + "\n")
+
+	defer logFile.Close()
 }
