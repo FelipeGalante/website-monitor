@@ -15,6 +15,11 @@ Options:
   -v --version     Show version.
 `
 
+const (
+	layoutUS     = "January 2, 2006 3:04 PM"
+	logFormatter = "2006-01-02 15:04:05.000 -07:00"
+)
+
 const configFile = "config.json"
 const logFile = "website-monitor.log"
 
@@ -45,11 +50,6 @@ func handleOption(option int) {
 }
 
 func printMenuOptions() {
-
-	const (
-		layoutUS = "January 2, 2006 3:04 PM"
-	)
-
 	t := time.Now()
 
 	fmt.Println("\n", t.Format(layoutUS))
@@ -120,7 +120,9 @@ func saveLog(url string, status string) {
 		fmt.Println(err)
 	}
 
-	logFile.WriteString(url + " - " + status + "\n")
+	time := "[" + time.Now().Format(logFormatter) + "] - "
+
+	logFile.WriteString(time + url + " - " + status + "\n")
 
 	defer logFile.Close()
 }
