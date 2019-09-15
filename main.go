@@ -41,6 +41,7 @@ func handleOption(option int) {
 		startMonitoring()
 	case 2:
 		fmt.Println("Logs:")
+		printLogs()
 	case 9:
 		fmt.Println("Exiting...")
 		os.Exit(0)
@@ -124,5 +125,15 @@ func saveLog(url string, status string) {
 
 	logFile.WriteString(time + url + " - " + status + "\n")
 
-	defer logFile.Close()
+	logFile.Close()
+}
+
+func printLogs() {
+	logFile, err := ioutil.ReadFile(logFile)
+
+	if err != nil {
+		fmt.Println(err)
+	}
+
+	fmt.Println(string(logFile))
 }
