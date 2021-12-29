@@ -23,6 +23,7 @@ const (
 const configFile = "config.json"
 const logFile = "website-monitor.log"
 
+// URLs
 type URLs struct {
 	URLs []string `json:"urls"`
 }
